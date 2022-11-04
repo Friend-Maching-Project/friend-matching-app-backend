@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url:
+      jdbc:mysql://localhost:3306/chat
+    username: woong
+    password: Jhan00254!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update # TODO: 배포 시 ddl-auto 삭제
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+logging:
+  level:
+    com.example.potatowoong: debug
+
+jwt:
+  secret: 9338f60fb540cc5f56629a3f378bd3548d10b57f4b47698274a7308f4da25c83cabc8ca13fa03ebb90b940f20d6ef20940168a6c91ee17d985663b653a75ffcc
+
+
