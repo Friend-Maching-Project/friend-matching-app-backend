@@ -33,6 +33,11 @@ public class AuthService {
         userRepository.save(user);
     }
 
+    public boolean emailDoubleCheck(SignUpRequestDto req) {
+        return userRepository.existsByEmail(req.getEmail());
+    }
+
+
     /*
     1. login 메소드는 MemberRequestDto에 있는 메소드 toAuthentication를 통해 생긴 UsernamePasswordAuthenticationToken 타입의 데이터를 가짐
     2. 주입받은 builder를 통해 AuthenticationManager를 구현한 ProviderManager를 생성한다.

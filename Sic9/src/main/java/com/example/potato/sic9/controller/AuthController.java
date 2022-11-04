@@ -5,6 +5,7 @@ import com.example.potato.sic9.dto.auth.LoginRequestDto;
 import com.example.potato.sic9.dto.auth.SignUpRequestDto;
 import com.example.potato.sic9.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +21,14 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<Void> signup(@RequestBody SignUpRequestDto requestDto) throws Exception {
         authService.signUp(requestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/email-double-check")
+    public ResponseEntity<Void> emailDoubleCheck(@RequestBody SignUpRequestDto requestDto) {
+        if (authService.emailDoubleCheck(requestDto)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
         return ResponseEntity.ok().build();
     }
 
