@@ -1,34 +1,15 @@
 package com.example.potato.sic9.repository;
 
-import com.example.potato.sic9.dto.ChatRoomDto;
+import com.example.potato.sic9.entity.ChatRoom;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
-import java.util.*;
-
 @Repository
-public class ChatRoomRepository {
-    private Map<String, ChatRoomDto> chatRoomDtoMap;
+public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
-    @PostConstruct
-    private void init() {
-        chatRoomDtoMap = new LinkedHashMap<>();
-    }
+    ChatRoom findChatRoomByChatRoomUUIDStartingWithAndChatRoomUUIDEndingWith(String start, String end);
 
-    public List<ChatRoomDto> findAllRooms() {
-        List<ChatRoomDto> result = new ArrayList<>(chatRoomDtoMap.values());
-        Collections.reverse(result);
-        return result;
-    }
+    boolean existsChatRoomByChatRoomUUIDStartingWithAndChatRoomUUIDEndingWith(String start, String end);
 
-    public ChatRoomDto findRoomById(String id) {
-        return chatRoomDtoMap.get(id);
-    }
-
-    public ChatRoomDto createChatRoomDto(String name) {
-        ChatRoomDto room = ChatRoomDto.create(name);
-        chatRoomDtoMap.put(room.getRoomId(), room);
-
-        return room;
-    }
+    ChatRoom findChatRoomByChatRoomUUID(String UUID);
 }

@@ -1,9 +1,17 @@
 package com.example.potato.sic9.jwt;
 
-import com.example.potato.sic9.dto.TokenDto;
-import io.jsonwebtoken.*;
+import com.example.potato.sic9.dto.auth.TokenDto;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import java.security.Key;
+import java.util.Date;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,10 +20,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
-
-import java.security.Key;
-import java.util.Date;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -48,11 +52,11 @@ public class JwtTokenProvider {
         // Token 만료 시간
         Date tokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         log.info(String.valueOf(tokenExpiresIn));
-
         // Token 생성
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim(AUTHORITIES_KEY, authorities) // Custom Claim 지정, Claims는 JWT의 body이고 JWT 생성자가 JWT를 받는이들이게 제시하기 바라는 정보를 포함
+                .claim(AUTHORITIES_KEY,
+                        authorities) // Custom Claim 지정, Claims는 JWT의 body이고 JWT 생성자가 JWT를 받는이들이게 제시하기 바라는 정보를 포함
                 .setExpiration(tokenExpiresIn) // 만료시간
                 .signWith(key, SignatureAlgorithm.HS512) // sign key 지정
                 .compact();

@@ -17,10 +17,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     // 받은 Email을 통해 user가 실제로 존재하는지 알아보는 메소드
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository
-                .findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username + " 을 DB에서 찾을 수 없습니다."));
-        ;
+        User user = username.contains("@")
+                ? userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username + " 을 DB에서 찾을 수 없습니다."))
+                : userRepository.findByNickname(username)
+                        .orElseThrow(() -> new UsernameNotFoundException(username + " 을 DB에서 찾을 수 없습니다."));
         return new UserAdapter(user);
     }
 }
