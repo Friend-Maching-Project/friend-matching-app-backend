@@ -1,14 +1,18 @@
 package com.example.potato.sic9.controller;
 
 import com.example.potato.sic9.annotation.AuthUser;
-import com.example.potato.sic9.dto.ChangePasswordRequestDto;
+import com.example.potato.sic9.dto.auth.ChangePasswordRequestDto;
 import com.example.potato.sic9.dto.user.UserRequestDto;
 import com.example.potato.sic9.dto.user.UserResponseDto;
 import com.example.potato.sic9.entity.User;
 import com.example.potato.sic9.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor

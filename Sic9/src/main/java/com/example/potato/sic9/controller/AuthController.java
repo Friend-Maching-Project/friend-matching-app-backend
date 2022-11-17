@@ -1,8 +1,8 @@
 package com.example.potato.sic9.controller;
 
-import com.example.potato.sic9.dto.TokenDto;
 import com.example.potato.sic9.dto.auth.LoginRequestDto;
 import com.example.potato.sic9.dto.auth.SignUpRequestDto;
+import com.example.potato.sic9.dto.auth.TokenDto;
 import com.example.potato.sic9.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

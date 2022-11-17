@@ -1,4 +1,4 @@
-package com.example.potato.sic9.dto;
+package com.example.potato.sic9.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
