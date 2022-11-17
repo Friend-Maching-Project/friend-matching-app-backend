@@ -1,34 +1,26 @@
 package com.example.potato.sic9.controller;
 
-import com.example.potato.sic9.dto.ChatDto;
+import com.example.potato.sic9.dto.chat.ChatDto;
+import com.example.potato.sic9.service.ChatService;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.socket.messaging.SessionConnectEvent;
+import org.springframework.stereotype.Controller;
 
-import java.util.Objects;
-
-@RestController
+@Controller
 @RequiredArgsConstructor
 public class WebSocketController {
-    private final SimpMessagingTemplate simpMessagingTemplate;
 
-    @MessageMapping("/chat")
-    public void sendMessage(ChatDto chatDto, SimpMessageHeaderAccessor accessor) {
-        /*
-        '/sub/chat/{channelId} 채널을 구독 중인 클라이언트에게 메시지를 전송
-        SimpMessagingTemplate는 특정 브로커로 메시지를 전달
-         */
-        System.out.println("/sub/channel " + chatDto);
-        simpMessagingTemplate.convertAndSend("/sub/channel/" + chatDto.getChannelId(), chatDto);
-    }
+    private final SimpMessagingTemplate template;   // 특정 Broker로 메시지를 전달
+    private final ChatService chatService;
 
-    @EventListener(SessionConnectEvent.class)
-    public void onConnect(SessionConnectEvent event) {
-        String sessionId = Objects.requireNonNull(event.getMessage().getHeaders().get("simpSessionId")).toString();
-        System.out.println(sessionId);
+    @MessageMapping("/private-message")
+    public void handle(@Payload ChatDto payload, Principal principal) {
+        payload.setSenderNickname(principal.getName());
+        template.convertAndSendToUser(payload.getSenderNickname(), "/queue/something", payload);
+        template.convertAndSendToUser(payload.getReceiverNickname(), "/queue/something", payload);
+        chatService.saveChat(payload);
     }
 }
