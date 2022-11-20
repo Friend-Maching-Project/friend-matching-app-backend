@@ -3,8 +3,24 @@ import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
 import Layout from './Layout';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { login } from '../redux/modules/auth';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const onLogin = (data) => {
+    dispatch(login(data)).then((res) => {
+      if (res.payload) {
+        // 로그인 성공
+        console.log('로그인 완료');
+      } else {
+        // 로그인 실패
+        alert('이메일 혹은 비밀번호를 확인해주세요.');
+      }
+    });
+  };
   const {
     register,
     handleSubmit,
@@ -15,7 +31,7 @@ const Login = () => {
       <div className="flex justify-center mt-16">
         <img src="/logo.png" alt="logo" className="w-36" />
       </div>
-      <form onSubmit={handleSubmit()}>
+      <form onSubmit={handleSubmit(onLogin)}>
         <div className="border-b mt-16">
           <span>
             <FontAwesomeIcon icon={faEnvelope} className="text-[#A6A6A6] text-2xl pr-3" />
