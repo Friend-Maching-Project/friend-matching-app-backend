@@ -37,6 +37,9 @@ public class AuthService {
         return userRepository.existsByEmail(req.getEmail());
     }
 
+    public boolean nicknameDoubleCheck(String nickname) {
+        return userRepository.existsByNickname(nickname);
+    }
 
     /*
     1. login 메소드는 MemberRequestDto에 있는 메소드 toAuthentication를 통해 생긴 UsernamePasswordAuthenticationToken 타입의 데이터를 가짐

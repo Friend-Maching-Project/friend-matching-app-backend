@@ -2,6 +2,7 @@ package com.example.potato.sic9.dto.auth;
 
 import com.example.potato.sic9.entity.Authority;
 import com.example.potato.sic9.entity.User;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,18 +18,18 @@ public class SignUpRequestDto {
     private String email;
     private String password;
     private String nickname;
-    private Integer age;
+    private LocalDate birth;
     private String sex;
-    private String department;
+    private String major;
 
     public User toUser(PasswordEncoder passwordEncoder) {
         return User.builder()
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .nickname(nickname)
-                .age(age)
+                .birth(birth)
                 .sex(sex)
-                .department(department)
+                .major(major)
                 .authority(Authority.ROLE_USER)
                 .build();
     }
