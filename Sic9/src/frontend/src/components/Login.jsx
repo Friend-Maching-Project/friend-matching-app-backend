@@ -26,6 +26,9 @@ const Login = () => {
     handleSubmit,
     formState: { isSubmitting, errors },
   } = useForm();
+  const onSignUp = () => {
+    navigate('/signup');
+  };
   return (
     <Layout>
       <div className="flex justify-center mt-16">
@@ -34,7 +37,7 @@ const Login = () => {
       <form onSubmit={handleSubmit(onLogin)}>
         <div className="border-b mt-16">
           <span>
-            <FontAwesomeIcon icon={faEnvelope} className="text-[#A6A6A6] text-2xl pr-3" />
+            <FontAwesomeIcon icon={faEnvelope} className="text-waniGray text-2xl pr-3" />
           </span>
           <input
             type="text"
@@ -58,7 +61,7 @@ const Login = () => {
         )}
         <div className="border-b mt-10 flex items-center">
           <span>
-            <FontAwesomeIcon icon={faLock} className="text-[#A6A6A6] text-2xl pr-3" />
+            <FontAwesomeIcon icon={faLock} className="text-waniGray text-2xl pr-3" />
           </span>
           <div className="flex">
             <input
@@ -75,7 +78,7 @@ const Login = () => {
                 // },
               })}
             />
-            <span className="text-[#18580C] ">Forgot?</span>
+            <span className="text-waniGreen ">Forgot?</span>
           </div>
         </div>
         {errors.password ? (
@@ -86,7 +89,7 @@ const Login = () => {
         <div>
           <button
             type="submit"
-            className="bg-[#18580C] text-white w-full h-12 rounded-lg text-2xl font-bold mt-10"
+            className="bg-waniGreen text-white w-full h-12 rounded-lg text-2xl font-bold mt-10"
             disabled={isSubmitting}
           >
             Login
@@ -94,7 +97,7 @@ const Login = () => {
         </div>
       </form>
       <div className="text-center mt-6">
-        <p className="text-[#A6A6A6]">OR</p>
+        <p className="text-waniGray">OR</p>
       </div>
       <div className="flex justify-between mx-10 mt-6">
         <div className="bg-[#F2F2F2] rounded-full w-10 h-10">
@@ -109,7 +112,9 @@ const Login = () => {
       </div>
       <div className="border-t mt-6 pt-6 flex justify-around px-14">
         <span className="text-[#A6A6A6]">New member?</span>
-        <span className="text-[#18580C]">Register</span>
+        <span className="text-[#18580C]" onClick={onSignUp}>
+          Register
+        </span>
       </div>
     </Layout>
   );
