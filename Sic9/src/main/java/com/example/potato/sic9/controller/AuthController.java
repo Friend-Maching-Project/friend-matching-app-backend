@@ -7,9 +7,11 @@ import com.example.potato.sic9.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,6 +29,14 @@ public class AuthController {
     @PostMapping("/email-double-check")
     public ResponseEntity<Void> emailDoubleCheck(@RequestBody SignUpRequestDto requestDto) {
         if (authService.emailDoubleCheck(requestDto)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("nickname-double-check")
+    public ResponseEntity<Void> nicknameDoubleCheck(@RequestParam String nickname) {
+        if (authService.nicknameDoubleCheck(nickname)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
         return ResponseEntity.ok().build();
