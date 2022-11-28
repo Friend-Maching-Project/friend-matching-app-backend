@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback } from 'react';
 import { useState } from 'react';
 import SignUpForm from './SignUpForm';
-import 'react-datepicker/dist/react-datepicker.css';
 import { useRef } from 'react';
 import moment from 'moment/moment';
 import WarnMessage from './WarnMessage';
