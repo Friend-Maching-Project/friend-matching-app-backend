@@ -1,15 +1,28 @@
 package com.example.potato.sic9.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Getter
@@ -36,14 +49,14 @@ public class User {
     @Setter
     private String nickname;
 
-    @Column(nullable = false, name = "user_age")
-    private Integer age;
+    @Column(nullable = false, name = "user_birth")
+    private LocalDate birth;
 
     @Column(nullable = false, name = "user_sex")
     private String sex;
 
-    @Column(nullable = false, name = "user_department")
-    private String department;
+    @Column(nullable = false, name = "user_major")
+    private String major;
 
     @Enumerated(EnumType.STRING) // enum 이름은 DB에 저장
     @Column(nullable = false, name = "user_authority")
@@ -71,9 +84,9 @@ public class User {
                 String email,
                 String password,
                 String nickname,
-                Integer age,
+                LocalDate birth,
                 String sex,
-                String department,
+                String major,
                 Authority authority,
                 LocalDateTime createdAt,
                 List<Article> articles,
@@ -82,9 +95,9 @@ public class User {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
-        this.age = age;
+        this.birth = birth;
         this.sex = sex;
-        this.department = department;
+        this.major = major;
         this.authority = authority;
         this.createdAt = createdAt;
         this.articles = articles;
