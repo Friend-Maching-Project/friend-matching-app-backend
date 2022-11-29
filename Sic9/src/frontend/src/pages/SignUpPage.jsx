@@ -90,7 +90,7 @@ const SignUpPage = () => {
       signUp={signUp}
     />,
   ];
-  return <div>{pages[page]}</div>;
+  return <>{pages[page]}</>;
 };
 
 export default SignUpPage;
