@@ -14,6 +14,7 @@ const Login = () => {
     dispatch(login(data)).then((res) => {
       if (res.payload) {
         // 로그인 성공
+        alert('로그인 완료');
         console.log('로그인 완료');
       } else {
         // 로그인 실패
@@ -30,8 +31,8 @@ const Login = () => {
     navigate('/signup');
   };
   return (
-    <Layout>
-      <div className="flex justify-center mt-16">
+    <Layout height="h-100">
+      <div className="flex justify-center pt-16">
         <img src="/logo.png" alt="logo" className="w-36" />
       </div>
       <form onSubmit={handleSubmit(onLogin)}>
