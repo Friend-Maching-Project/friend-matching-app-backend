@@ -1,9 +1,14 @@
 spring:
+#  datasource:
+#    url:
+#      jdbc:mysql://localhost:3306/chat
+#    username: woong
+#    password: Jhan00254!
+#    driver-class-name: com.mysql.cj.jdbc.Driver
   datasource:
-    url:
-      jdbc:mysql://localhost:3306/chat
-    username: woong
-    password: Jhan00254!
+    url: jdbc:mysql://ebh2y8tqym512wqs.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/dtp125vfu1wqqxc3
+    username: g2bd5ln75c8aavzp
+    password: wwj12mfctwj7r1ua
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
