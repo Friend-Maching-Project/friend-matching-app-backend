@@ -10,6 +10,8 @@ spring:
     username: g2bd5ln75c8aavzp
     password: wwj12mfctwj7r1ua
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 9
   jpa:
     hibernate:
       ddl-auto: update # TODO: 배포 시 ddl-auto 삭제
