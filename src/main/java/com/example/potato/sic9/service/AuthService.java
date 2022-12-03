@@ -6,6 +6,7 @@ import com.example.potato.sic9.dto.auth.TokenDto;
 import com.example.potato.sic9.entity.User;
 import com.example.potato.sic9.jwt.JwtTokenProvider;
 import com.example.potato.sic9.repository.UserRepository;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -48,11 +49,11 @@ public class AuthService {
     4. DaoAuthenticationProvider 내부에 있는 authenticate에서 retrieveUser을 통해 DB에서의 User의 비밀번호가 실제 비밀번호와 맞는지 비교
     5. retrieveUser에서는 DB에서의 User를 꺼내기 위해, CustomUserDetailService에 있는 loadUserByUsername을 가져와 사용
      */
-    public TokenDto login(LoginRequestDto req) {
+    public Map<String, Object> login(LoginRequestDto req) {
         UsernamePasswordAuthenticationToken authenticationToken = req.toAuthentication();
 
         Authentication authentication = managerBuilder.getObject().authenticate(authenticationToken);
 
-        return jwtTokenProvider.generateTokenDto(authentication);
+        return jwtTokenProvider.generateTokenDtoSet(authentication);
     }
 }

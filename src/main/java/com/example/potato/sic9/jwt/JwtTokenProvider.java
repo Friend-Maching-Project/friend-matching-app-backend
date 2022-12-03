@@ -1,5 +1,6 @@
 package com.example.potato.sic9.jwt;
 
+import com.example.potato.sic9.dto.auth.RefreshTokenDto;
 import com.example.potato.sic9.dto.auth.TokenDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -11,6 +12,8 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +30,8 @@ public class JwtTokenProvider {
 
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "bearer";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60;
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 10;
     //    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 10;  // TODO : 테스트 후 수정
     private final Key key;
     private final UserDetailsService userDetailsService;
@@ -40,32 +44,93 @@ public class JwtTokenProvider {
     }
 
     // Token 생성
-    public TokenDto generateTokenDto(Authentication authentication) {
+    public Map<String, Object> generateTokenDtoSet(Authentication authentication) {
+        Map<String, Object> tokens = new HashMap<>();
         // 권한을 받음. Ex) authorities = ROLE_USER
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         // 현재 시간
-        long now = (new Date()).getTime();
+        long now = new Date().getTime();
 
         // Token 만료 시간
-        Date tokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
-        log.info(String.valueOf(tokenExpiresIn));
+        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+        Date refreshTokenExpiresIn = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
+        log.info(String.valueOf(accessTokenExpiresIn));
+        log.info(String.valueOf(refreshTokenExpiresIn));
+
         // Token 생성
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY,
                         authorities) // Custom Claim 지정, Claims는 JWT의 body이고 JWT 생성자가 JWT를 받는이들이게 제시하기 바라는 정보를 포함
-                .setExpiration(tokenExpiresIn) // 만료시간
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(accessTokenExpiresIn) // 만료시간
                 .signWith(key, SignatureAlgorithm.HS512) // sign key 지정
                 .compact();
 
+        String refreshToken = Jwts.builder()
+                .setSubject(authentication.getName())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(refreshTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+
         // TokenDto에 생성한 Token의 정보를 넣는다
+        TokenDto accessTokenDto = TokenDto.builder()
+                .grantType(BEARER_TYPE)
+                .token(accessToken)
+                .tokenExpiresIn(accessTokenExpiresIn.getTime())
+                .build();
+
+        RefreshTokenDto refreshTokenDto = RefreshTokenDto.builder()
+                .refreshToken(refreshToken)
+                .tokenExpiresIn(refreshTokenExpiresIn.getTime())
+                .build();
+
+        tokens.put("accessToken", accessTokenDto);
+        tokens.put("refreshToken", refreshTokenDto);
+        return tokens;
+    }
+
+    public RefreshTokenDto reGenerateRefreshTokenDto(String userName) {
+        long now = new Date().getTime();
+        Date refreshTokenExpiresIn = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
+        String refreshToken = Jwts.builder()
+                .setSubject(userName)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(refreshTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+
+        return RefreshTokenDto.builder()
+                .refreshToken(refreshToken)
+                .tokenExpiresIn(refreshTokenExpiresIn.getTime())
+                .build();
+    }
+
+    public TokenDto generateAccessTokenDto(String userName) {
+
+//        String authorities = authentication.getAuthorities().stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .collect(Collectors.joining(","));
+        long now = new Date().getTime();
+        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+
+        String accessToken = Jwts.builder()
+                .setSubject(userName)
+                .claim(AUTHORITIES_KEY,
+                        "ROLE_USER") // Custom Claim 지정, Claims는 JWT의 body이고 JWT 생성자가 JWT를 받는이들이게 제시하기 바라는 정보를 포함
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(accessTokenExpiresIn) // 만료시간
+                .signWith(key, SignatureAlgorithm.HS512) // sign key 지정
+                .compact();
+
         return TokenDto.builder()
                 .grantType(BEARER_TYPE)
-                .accessToken(accessToken)
-                .tokenExpiresIn(tokenExpiresIn.getTime())
+                .token(accessToken)
+                .tokenExpiresIn(accessTokenExpiresIn.getTime())
                 .build();
     }
 
@@ -81,12 +146,7 @@ public class JwtTokenProvider {
 //                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
 //                        .map(SimpleGrantedAuthority::new).toList();
 
-        String username = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(accessToken)
-                .getBody()
-                .getSubject();
+        String username = getUserName(accessToken);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
@@ -109,6 +169,15 @@ public class JwtTokenProvider {
         return false;
     }
 
+    public String getUserName(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
     private Claims parseClaims(String accessToken) {
         try {
             return Jwts
@@ -121,4 +190,6 @@ public class JwtTokenProvider {
             return e.getClaims();
         }
     }
+
+
 }
