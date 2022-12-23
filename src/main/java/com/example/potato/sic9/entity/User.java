@@ -1,5 +1,7 @@
 package com.example.potato.sic9.entity;
 
+import com.example.potato.sic9.common.AuthProvider;
+import com.example.potato.sic9.common.Authority;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,29 +40,40 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(nullable = false, name = "user_email")
+    @Column(name = "user_oauth_id")
+    private String OAuthId;
+
+    @Column(name = "user_email")
     private String email;
 
-    @Column(nullable = false, name = "user_password")
+    @Column(name = "user_password")
     @Setter
     private String password;
 
-    @Column(nullable = false, name = "user_nickname")
+    @Column(name = "user_nickname")
     @Setter
     private String nickname;
 
-    @Column(nullable = false, name = "user_birth")
+    @Column(name = "user_birth")
+    @Setter
     private LocalDate birth;
 
-    @Column(nullable = false, name = "user_sex")
+    @Column(name = "user_sex")
+    @Setter
     private String sex;
 
-    @Column(nullable = false, name = "user_major")
+    @Column(name = "user_major")
+    @Setter
     private String major;
 
     @Enumerated(EnumType.STRING) // enum 이름은 DB에 저장
     @Column(nullable = false, name = "user_authority")
     private Authority authority;
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_auth_provider")
+    private AuthProvider authProvider;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @CreatedDate
@@ -81,6 +94,7 @@ public class User {
 
     @Builder
     public User(Long id,
+                String OAuthId,
                 String email,
                 String password,
                 String nickname,
@@ -88,10 +102,12 @@ public class User {
                 String sex,
                 String major,
                 Authority authority,
+                AuthProvider authProvider,
                 LocalDateTime createdAt,
                 List<Article> articles,
                 List<ArticleComment> articleComments) {
         this.id = id;
+        this.OAuthId = OAuthId;
         this.email = email;
         this.password = password;
         this.nickname = nickname;
@@ -99,6 +115,7 @@ public class User {
         this.sex = sex;
         this.major = major;
         this.authority = authority;
+        this.authProvider = authProvider;
         this.createdAt = createdAt;
         this.articles = articles;
         this.articleComments = articleComments;
