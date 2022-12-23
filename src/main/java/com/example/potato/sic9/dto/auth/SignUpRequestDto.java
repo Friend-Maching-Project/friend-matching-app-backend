@@ -1,6 +1,6 @@
 package com.example.potato.sic9.dto.auth;
 
-import com.example.potato.sic9.entity.Authority;
+import com.example.potato.sic9.common.Authority;
 import com.example.potato.sic9.entity.User;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
