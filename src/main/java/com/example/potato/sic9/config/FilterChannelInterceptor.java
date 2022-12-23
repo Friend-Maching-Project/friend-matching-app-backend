@@ -1,6 +1,6 @@
 package com.example.potato.sic9.config;
 
-import com.example.potato.sic9.jwt.JwtTokenProvider;
+import com.example.potato.sic9.security.jwt.JwtTokenProvider;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.Ordered;

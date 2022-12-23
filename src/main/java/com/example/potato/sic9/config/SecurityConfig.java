@@ -1,8 +1,12 @@
 package com.example.potato.sic9.config;
 
-import com.example.potato.sic9.jwt.JwtAccessDeniedHandler;
-import com.example.potato.sic9.jwt.JwtAuthenticationEntryPoint;
-import com.example.potato.sic9.jwt.JwtTokenProvider;
+import com.example.potato.sic9.security.jwt.JwtAccessDeniedHandler;
+import com.example.potato.sic9.security.jwt.JwtAuthenticationEntryPoint;
+import com.example.potato.sic9.security.jwt.JwtTokenProvider;
+import com.example.potato.sic9.security.oauth.CookieAuthorizationRequestRepository;
+import com.example.potato.sic9.security.oauth.CustomOAuth2UserService;
+import com.example.potato.sic9.security.oauth.OAuth2AuthenticationFailureHandler;
+import com.example.potato.sic9.security.oauth.OAuth2AuthenticationSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +27,10 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final CookieAuthorizationRequestRepository cookieAuthorizationRequestRepository;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -47,6 +55,21 @@ public class SecurityConfig {
 //                .antMatchers("/chat/**").permitAll()
 //                .anyRequest().authenticated()
                 .anyRequest().permitAll()
+                .and()
+                .formLogin().disable()
+                .oauth2Login()
+                .authorizationEndpoint()
+                .baseUri("/oauth2/authorize")
+                .authorizationRequestRepository(cookieAuthorizationRequestRepository)
+                .and()
+                .redirectionEndpoint()
+                .baseUri("/oauth2/callback/*")
+                .and()
+                .userInfoEndpoint()
+                .userService(customOAuth2UserService)
+                .and()
+                .successHandler(oAuth2AuthenticationSuccessHandler)
+                .failureHandler(oAuth2AuthenticationFailureHandler)
                 .and()
                 .apply(new JwtSecurityConfig(jwtTokenProvider));
 

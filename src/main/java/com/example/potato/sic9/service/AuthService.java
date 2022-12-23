@@ -2,10 +2,9 @@ package com.example.potato.sic9.service;
 
 import com.example.potato.sic9.dto.auth.LoginRequestDto;
 import com.example.potato.sic9.dto.auth.SignUpRequestDto;
-import com.example.potato.sic9.dto.auth.TokenDto;
 import com.example.potato.sic9.entity.User;
-import com.example.potato.sic9.jwt.JwtTokenProvider;
 import com.example.potato.sic9.repository.UserRepository;
+import com.example.potato.sic9.security.jwt.JwtTokenProvider;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

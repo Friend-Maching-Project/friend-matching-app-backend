@@ -1,7 +1,7 @@
 package com.example.potato.sic9.config;
 
-import com.example.potato.sic9.jwt.JwtTokenFilter;
-import com.example.potato.sic9.jwt.JwtTokenProvider;
+import com.example.potato.sic9.security.jwt.JwtTokenFilter;
+import com.example.potato.sic9.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
