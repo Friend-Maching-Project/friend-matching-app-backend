@@ -1,7 +1,8 @@
-package com.example.potato.sic9.jwt;
+package com.example.potato.sic9.security.jwt;
 
+import com.example.potato.sic9.common.ExpireTime;
+import com.example.potato.sic9.dto.auth.AccessTokenDto;
 import com.example.potato.sic9.dto.auth.RefreshTokenDto;
-import com.example.potato.sic9.dto.auth.TokenDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -30,9 +31,6 @@ public class JwtTokenProvider {
 
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "bearer";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60;
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 10;
-    //    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 10;  // TODO : 테스트 후 수정
     private final Key key;
     private final UserDetailsService userDetailsService;
 
@@ -55,8 +53,8 @@ public class JwtTokenProvider {
         long now = new Date().getTime();
 
         // Token 만료 시간
-        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
-        Date refreshTokenExpiresIn = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
+        Date accessTokenExpiresIn = new Date(now + ExpireTime.ACCESS_TOKEN_EXPIRE_TIME.getTime());
+        Date refreshTokenExpiresIn = new Date(now + ExpireTime.REFRESH_COOKIE_EXPIRE_TIME.getTime());
         log.info(String.valueOf(accessTokenExpiresIn));
         log.info(String.valueOf(refreshTokenExpiresIn));
 
@@ -78,7 +76,7 @@ public class JwtTokenProvider {
                 .compact();
 
         // TokenDto에 생성한 Token의 정보를 넣는다
-        TokenDto accessTokenDto = TokenDto.builder()
+        AccessTokenDto accessTokenDto = AccessTokenDto.builder()
                 .grantType(BEARER_TYPE)
                 .token(accessToken)
                 .tokenExpiresIn(accessTokenExpiresIn.getTime())
@@ -96,7 +94,7 @@ public class JwtTokenProvider {
 
     public RefreshTokenDto reGenerateRefreshTokenDto(String userName) {
         long now = new Date().getTime();
-        Date refreshTokenExpiresIn = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
+        Date refreshTokenExpiresIn = new Date(now + ExpireTime.REFRESH_TOKEN_EXPIRE_TIME.getTime());
         String refreshToken = Jwts.builder()
                 .setSubject(userName)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
@@ -110,13 +108,14 @@ public class JwtTokenProvider {
                 .build();
     }
 
-    public TokenDto generateAccessTokenDto(String userName) {
+    public AccessTokenDto generateAccessTokenDto(String userName) {
+        // TODO : 이름만 받았을 때 Authentication 받는 방법 생각해보기
 
 //        String authorities = authentication.getAuthorities().stream()
 //                .map(GrantedAuthority::getAuthority)
 //                .collect(Collectors.joining(","));
         long now = new Date().getTime();
-        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+        Date accessTokenExpiresIn = new Date(now + ExpireTime.ACCESS_TOKEN_EXPIRE_TIME.getTime());
 
         String accessToken = Jwts.builder()
                 .setSubject(userName)
@@ -127,7 +126,31 @@ public class JwtTokenProvider {
                 .signWith(key, SignatureAlgorithm.HS512) // sign key 지정
                 .compact();
 
-        return TokenDto.builder()
+        return AccessTokenDto.builder()
+                .grantType(BEARER_TYPE)
+                .token(accessToken)
+                .tokenExpiresIn(accessTokenExpiresIn.getTime())
+                .build();
+    }
+
+    public AccessTokenDto generateAccessTokenDto(Authentication authentication) {
+
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+        long now = new Date().getTime();
+        Date accessTokenExpiresIn = new Date(now + ExpireTime.ACCESS_TOKEN_EXPIRE_TIME.getTime());
+
+        String accessToken = Jwts.builder()
+                .setSubject(authentication.getName())
+                .claim(AUTHORITIES_KEY,
+                        "ROLE_USER") // Custom Claim 지정, Claims는 JWT의 body이고 JWT 생성자가 JWT를 받는이들이게 제시하기 바라는 정보를 포함
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(accessTokenExpiresIn) // 만료시간
+                .signWith(key, SignatureAlgorithm.HS512) // sign key 지정
+                .compact();
+
+        return AccessTokenDto.builder()
                 .grantType(BEARER_TYPE)
                 .token(accessToken)
                 .tokenExpiresIn(accessTokenExpiresIn.getTime())
