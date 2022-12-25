@@ -25,7 +25,8 @@ public class CookieUtil {
         // TODO : secure 설정
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
-        cookie.setHttpOnly(true);
+        // TODO : 배포 시 HttpOnly(true) 설정
+        // cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
         response.addCookie(cookie);
     }
