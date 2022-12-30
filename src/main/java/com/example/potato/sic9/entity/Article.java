@@ -2,16 +2,28 @@ package com.example.potato.sic9.entity;
 
 import com.example.potato.sic9.dto.article.ArticleRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -61,7 +73,8 @@ public class Article {
 
 
     @Builder
-    public Article(Long id, String place, String comment, LocalDateTime createdAt, LocalDateTime modifiedAt, String meetAt, User user, List<ArticleComment> articleComments) {
+    public Article(Long id, String place, String comment, LocalDateTime createdAt, LocalDateTime modifiedAt,
+                   String meetAt, User user, List<ArticleComment> articleComments) {
         this.id = id;
         this.place = place;
         this.comment = comment;
