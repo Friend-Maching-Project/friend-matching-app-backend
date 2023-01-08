@@ -8,6 +8,7 @@ import com.example.potato.sic9.service.ArticleService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,9 @@ public class ArticleController {
 
     @PostMapping()
     public ResponseEntity<Void> saveArticle(@AuthUser User user, @RequestBody ArticleRequestDto req) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         articleService.saveArticle(req.of(user));
         return ResponseEntity.ok().build();
     }
