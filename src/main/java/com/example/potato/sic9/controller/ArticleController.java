@@ -59,6 +59,9 @@ public class ArticleController {
 
     @DeleteMapping()
     public ResponseEntity<Void> deleteArticle(@AuthUser User user, @RequestParam Long id) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         articleService.deleteArticle(user, id);
         return ResponseEntity.ok().build();
     }
@@ -66,6 +69,9 @@ public class ArticleController {
     @PutMapping("/{articleId}")
     public ResponseEntity<ArticleResponseDto> updateArticle(@AuthUser User user, @PathVariable Long articleId,
                                                             @RequestBody ArticleRequestDto dto) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         return ResponseEntity.ok(articleService.updateArticle(user, articleId, dto));
     }
 
